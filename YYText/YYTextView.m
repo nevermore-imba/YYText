@@ -2169,7 +2169,7 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
     
     [_inputDelegate selectionWillChange:self];
     [_inputDelegate textWillChange:self];
-     _innerText = text;
+    _innerText = text;
     [self _parseText];
     _selectedTextRange = [YYTextRange rangeWithRange:NSMakeRange(0, _innerText.length)];
     [_inputDelegate textDidChange:self];
@@ -2741,7 +2741,7 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
     [self _endTouchTracking];
     [self _hideMenu];
-
+    
     if (!_state.swallowTouch) [super touchesCancelled:touches withEvent:event];
 }
 
@@ -3667,7 +3667,7 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
         NSUInteger ofs = position.offset;
         if (position.offset == _innerText.length ||
             direction == UITextStorageDirectionBackward) {
-             ofs--;
+            ofs--;
         }
         attrs = [_innerText attributesAtIndex:ofs effectiveRange:NULL];
     }
@@ -3685,6 +3685,20 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
 - (NSInteger)characterOffsetOfPosition:(YYTextPosition *)position withinRange:(YYTextRange *)range {
     return position ? position.offset : NSNotFound;
 }
+
+#pragma mark - Dark mode Adapter
+
+#ifdef __IPHONE_13_0
+
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+    [super traitCollectionDidChange:previousTraitCollection];
+    if (@available(iOS 13.0, *)) {
+        if ([UITraitCollection.currentTraitCollection hasDifferentColorAppearanceComparedToTraitCollection:previousTraitCollection]) {
+            [self _commitUpdate];
+        }
+    }
+}
+#endif
 
 @end
 
