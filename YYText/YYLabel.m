@@ -1101,7 +1101,7 @@ static dispatch_queue_t YYLabelGetReleaseQueue() {
         [attachmentViews removeAllObjects];
         [attachmentLayers removeAllObjects];
     };
-
+    
     task.display = ^(CGContextRef context, CGSize size, BOOL (^isCancelled)(void)) {
         if (isCancelled()) return;
         if (text.length == 0) return;
@@ -1133,7 +1133,7 @@ static dispatch_queue_t YYLabelGetReleaseQueue() {
         point = YYTextCGPointPixelRound(point);
         [drawLayout drawInContext:context size:size point:point view:nil layer:nil debug:debug cancel:isCancelled];
     };
-
+    
     task.didDisplay = ^(CALayer *layer, BOOL finished) {
         YYTextLayout *drawLayout = layout;
         if (layoutUpdated && shrinkLayout) {
@@ -1204,6 +1204,19 @@ static dispatch_queue_t YYLabelGetReleaseQueue() {
     
     return task;
 }
+
+#pragma mark - DarkMode Adapater
+
+#ifdef __IPHONE_13_0
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+    [super traitCollectionDidChange:previousTraitCollection];
+    if (@available(iOS 13.0, *)) {
+        if ([UITraitCollection.currentTraitCollection hasDifferentColorAppearanceComparedToTraitCollection:previousTraitCollection]) {
+            [self.layer setNeedsDisplay];
+        }
+    }
+}
+#endif
 
 @end
 
